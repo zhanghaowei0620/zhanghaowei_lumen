@@ -20,5 +20,6 @@ $router->get('/', function () use ($router) {
 //});
 $router->post('/test','Test\TestController@test');
 $router->post('/reg','User\UserController@register');
+$router->post('/logindo','User\UserController@logindo');
 
 $router->get('/ajax','Test\TestController@ajaxTest');

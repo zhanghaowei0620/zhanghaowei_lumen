@@ -4,6 +4,8 @@ namespace App\Http\Controllers\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Str;
 
 
 class UserController extends Controller
@@ -25,6 +27,27 @@ class UserController extends Controller
         $email = $info['email'];
         $user_pwd = $info['user_pwd'];
         //var_dump($info);exit;
+        if(empty($name)){
+            $response = [
+                'error' => 50005,
+                'msg'   => '账号不能为空'
+            ];
+            die(json_encode($response,JSON_UNESCAPED_UNICODE));
+        }
+        if(empty($email)){
+            $response = [
+                'error' => 50006,
+                'msg'   => '邮箱不能为空'
+            ];
+            die(json_encode($response,JSON_UNESCAPED_UNICODE));
+        }
+        if(empty($user_pwd)){
+            $response = [
+                'error' => 50005,
+                'msg'   => '请输入密码'
+            ];
+            die(json_encode($response,JSON_UNESCAPED_UNICODE));
+        }
 
         $e = DB::table('user_info')->where('email',$email)->first();
         if($e){
@@ -57,12 +80,79 @@ class UserController extends Controller
                 'error'=>0,
                 'msg'=>'注册成功'
             ];
-            //$res = DB::table('user_info')->insert($info);
             die(json_encode($response,JSON_UNESCAPED_UNICODE));
         }
 
 
         //file_put_contents('/tmp/demo.log',$dec_data,FILE_APPEND);
+    }
+
+
+    public function logindo(Request $request){
+        //header("Access-Control-Allow-Origin: *");
+        $email = $request->input('user_email');
+        $password = $request->input('user_pwd');
+        //echo $email;exit;
+        $passInfo = DB::table('user_info')->where('email',$email)->first();
+        //var_dump($passInfo);exit;
+        if(empty($email)){
+            $response = [
+                'error'=>50004,
+                'msg'=>'邮箱不能为空'
+            ];
+            die(json_encode($response,JSON_UNESCAPED_UNICODE));
+        }
+        if(empty($password)){
+            $response = [
+                'error'=>50005,
+                'msg'=>'密码不能为空'
+            ];
+            die(json_encode($response,JSON_UNESCAPED_UNICODE));
+        }
+        if(empty($passInfo)){
+            $response = [
+                'error'=>50005,
+                'msg'=>'请输入正确的email或密码'
+            ];
+            die(json_encode($response,JSON_UNESCAPED_UNICODE));
+        }
+        $pass = $passInfo->user_pwd;
+        $uid = $passInfo->uid;
+        //var_dump($pass);exit;
+        $user_pass = password_verify($password,$pass);
+        //var_dump($user_pass);exit;
+        if($user_pass == false){
+            $response = [
+                'error'=>50005,
+                'msg'=>'请输入正确的email或密码'
+            ];
+            die(json_encode($response,JSON_UNESCAPED_UNICODE));
+        }else{
+            $token = sha1(Str::random(10).md5(time()).$uid);
+            $response = [
+                'error'=>0,
+                'msg'=>'登陆成功',
+                'token'=>$token
+            ];
+
+            $id = Redis::incr('id');
+            $hsetkey = "id_{$id}";
+            $keylist = "H:user_login";
+            Redis::hset($hsetkey,'id',$id);
+            Redis::hset($hsetkey,'user_id',$uid);
+            Redis::hset($hsetkey,'token',$token);
+            Redis::hset($hsetkey,'createtime',time());
+            Redis::lpush($keylist,$hsetkey);
+
+            //var_dump($token);exit;
+
+        }
+
+
+        die(json_encode($response,JSON_UNESCAPED_UNICODE));
+
+        //var_dump($data);exit;
+
     }
 
 }

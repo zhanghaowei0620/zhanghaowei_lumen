@@ -38,6 +38,7 @@ $app = new Laravel\Lumen\Application(
 
 $app->singleton(
     Illuminate\Contracts\Debug\ExceptionHandler::class,
+    Illuminate\Redis\RedisServiceProvider::class,
     App\Exceptions\Handler::class
 );
 

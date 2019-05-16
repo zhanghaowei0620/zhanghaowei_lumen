@@ -21,9 +21,9 @@ $app = new Laravel\Lumen\Application(
     dirname(__DIR__)
 );
 
- $app->withFacades();
+$app->withFacades();
 
- $app->withEloquent();
+$app->withEloquent();
 
 /*
 |--------------------------------------------------------------------------
@@ -38,10 +38,9 @@ $app = new Laravel\Lumen\Application(
 
 $app->singleton(
     Illuminate\Contracts\Debug\ExceptionHandler::class,
-    Illuminate\Redis\RedisServiceProvider::class,
     App\Exceptions\Handler::class
 );
-
+$app->register(Illuminate\Redis\RedisServiceProvider::class);
 $app->singleton(
     Illuminate\Contracts\Console\Kernel::class,
     App\Console\Kernel::class
@@ -62,10 +61,10 @@ $app->singleton(
 //     App\Http\Middleware\ExampleMiddleware::class
 // ]);
 
-// $app->routeMiddleware([
-//     'auth' => App\Http\Middleware\Authenticate::class,
-// ]);
 
+$app->routeMiddleware([
+    'checkLogin' => \App\Http\Middleware\CheckLogin::class,
+]);
 /*
 |--------------------------------------------------------------------------
 | Register Service Providers

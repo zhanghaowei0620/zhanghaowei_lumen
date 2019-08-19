@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
+    /**注册*/
     public function register(Request $request){
 //        header("Access-Control-Allow-Origin:*");
         $name = $request->input('user_name');
@@ -54,6 +55,7 @@ class UserController extends Controller
     }
 
 
+    /**登陆*/
     public function logindo(Request $request){
         //header("Access-Control-Allow-Origin: *");
         $email = $request->input('user_email');
@@ -63,7 +65,7 @@ class UserController extends Controller
             'user_pwd'=>$password
         ];
         $json_str = json_encode($data,JSON_UNESCAPED_UNICODE);
-        $url = "http://clinet.wh6636.cn/logindo";
+        $url = "http://clinet.1809a.com/logindo";
         //var_dump($url);exit;
         $ch = curl_init();
         curl_setopt($ch,CURLOPT_URL, $url);
@@ -82,9 +84,9 @@ class UserController extends Controller
 
     }
 
-
+    /**个人中心*/
     public function center(){
-
+        echo "已授权";
     }
 
 }

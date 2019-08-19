@@ -58,20 +58,24 @@ class UserController extends Controller
     /**登陆*/
     public function logindo(Request $request){
         //header("Access-Control-Allow-Origin: *");
-        $email = $request->input('user_email');
-        $password = $request->input('user_pwd');
+        $email = $request->input('email');
+        $password = $request->input('pwd');
         $data = [
             'email'=>$email,
-            'user_pwd'=>$password
+            'pwd'=>$password
         ];
+        //var_dump($data);exit;
         $json_str = json_encode($data,JSON_UNESCAPED_UNICODE);
-        $url = "http://clinet.1809a.com/logindo";
+        $private = openssl_pkey_get_private('file://'.storage_path('app/keys/private.pem'));
+        openssl_private_encrypt($json_str,$enc_data,$private);
+        //var_dump($enc_data);exit;
+        $url = "http://client.1809a.com/logindo";
         //var_dump($url);exit;
         $ch = curl_init();
         curl_setopt($ch,CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch,CURLOPT_POSTFIELDS,$json_str);
+        curl_setopt($ch,CURLOPT_POSTFIELDS,$enc_data);
         curl_setopt($ch,CURLOPT_HTTPHEADER,['Content-Type:text/plain']);
 
         $info = curl_exec($ch);

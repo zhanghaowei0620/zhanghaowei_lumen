@@ -19,7 +19,7 @@ $router->get('/', function () use ($router) {
 //
 ////    return $router->app->version();
 //});
-$router->post('/login','User\UserController@logindo');
+$router->get('/login','User\UserController@logindo');
 $router->options('/login',function() use ($router){
     return [];
 });

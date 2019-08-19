@@ -88,10 +88,14 @@ class UserController extends Controller
 
     }
 
-    /**个人中心*/
-    public function center(){
-        echo "已授权";
+
+
+    public function info()
+    {
+        echo 11111;
+
     }
+
 
 }
 

@@ -27,6 +27,10 @@ $router->group(['middleware' => 'checkLogin'], function () use ($router) {
     $router->get('/weather','Test\TestController@weather');
 });
 
+$router->group(['middleware' => 'checkLogin'], function () use ($router) {
+    $router->get('/info','User\UserController@info');
+});
+
 
 
 

@@ -16,7 +16,7 @@ class CheckLogin
      */
     public function handle($request, Closure $next)
     {
-        $keylist = "H:userlogin_id";
+        $keylist = "H:user_login";
         $token = Redis::get($keylist);
         //var_dump($token);exit;
         if(empty($token)){
